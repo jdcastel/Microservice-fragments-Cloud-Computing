@@ -5,7 +5,8 @@
   "description": "Fragments back-end API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --config .eslintrc.js \"./src/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -14,6 +15,7 @@
   "author": "JuanDCastelblanco",
   "license": "UNLICENSED",
   "devDependencies": {
+    "eslint": "^8.49.0",
     "prettier": "3.0.3"
   }
 }
