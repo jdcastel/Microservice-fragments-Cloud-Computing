@@ -12,5 +12,8 @@
     "url": "git+https://github.com/jdcastel/fragments.git"
   },
   "author": "JuanDCastelblanco",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.0.3"
+  }
 }
