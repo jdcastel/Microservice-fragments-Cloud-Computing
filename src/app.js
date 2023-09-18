@@ -4,9 +4,11 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
+const passport = require('passport');
 
+const authenticate = require('./auth');
 // author and version from our package.json file
-const { author, version } = require('../package.json');
+// const { author, version } = require('../package.json');
 
 const logger = require('./logger');
 const pino = require('pino-http')({
@@ -16,6 +18,16 @@ const pino = require('pino-http')({
 
 // Create an express app instance we can use to attach middleware and HTTP routes
 const app = express();
+
+//lab 2
+app.use(compression());
+
+// Set up our passport authentication middleware
+passport.use(authenticate.strategy());
+app.use(passport.initialize());
+
+// Define our routes
+app.use('/', require('./routes'));
 
 // Use pino logging middleware
 app.use(pino);
@@ -31,20 +43,21 @@ app.use(compression());
 
 // Define a simple health check route. If the server is running
 // we'll respond with a 200 OK.  If not, the server isn't healthy.
-app.get('/', (req, res) => {
-  // Clients shouldn't cache this response (always request it fresh)
-  // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
-  res.setHeader('Cache-Control', 'no-cache');
+// app.get('/', (req, res) => {
+//   // Clients shouldn't cache this response (always request it fresh)
+//   // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
+//   res.setHeader('Cache-Control', 'no-cache');
 
-  // Send a 200 'OK' response with info about our repo
-  res.status(200).json({
-    status: 'ok',
-    author,
-    // TODO: change this to use your GitHub username!
-    githubUrl: 'https://github.com/humphd/fragments',
-    version,
-  });
-});
+//   // Send a 200 'OK' response with info about our repo
+//   res.status(200).json({
+//     status: 'ok',
+//     author,
+//     // TODO: change this to use your GitHub username!
+//     githubUrl: 'https://github.com/humphd/fragments',
+//     version,
+//   });
+// });
+app.use('/', require('./routes'));
 
 // Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
