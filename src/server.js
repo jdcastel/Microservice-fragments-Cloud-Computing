@@ -1,5 +1,5 @@
 // src/server.js
-const process = require('process');
+
 // We want to gracefully shutdown our server
 const stoppable = require('stoppable');
 
