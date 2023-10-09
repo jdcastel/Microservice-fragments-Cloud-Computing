@@ -10,7 +10,6 @@
   describe('tests functions in memory index -', () => {
     const f1 = { ownerId: 'f1', id: '1', fragment: 'f1 data text' };
     const f2 = { ownerId: 'f1', id: '2', fragment: 'f2 data text' };
-    const f3 = { ownerId: 'f1', id: '3', fragment: 'f3 data text' };
   
     test('write fragment data into the In-Memory DB', async () => {
       await writeFragment(f1);
@@ -21,14 +20,14 @@
     });
   
     test('list of fragments test', async () => {
-      const id = await listFragments('f1');
-      expect(Array.isArray(id)).toBe(true);
-      expect(id).toEqual(['1', '2', '3']);
+      const idList = await listFragments('f1');
+      expect(Array.isArray(idList)).toBe(true);
+      expect(idList).toEqual(['1', '2']);
 
       const listOfFragments = await listFragments('f1', true);
       expect(Array.isArray(listOfFragments)).toBe(true);
       expect(listOfFragments).toEqual([
-        {f1},{f2},{f3},
+        f1,f2,
       ]);
     });
   
