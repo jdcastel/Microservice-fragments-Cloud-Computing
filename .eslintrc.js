@@ -8,7 +8,9 @@ module.exports = {
     "extends": "eslint:recommended", 
     globals: {
         process: true,
+        Buffer: true,
       },
+    "plugins": ["jest"],
     "overrides": [
         {
             "env": {
