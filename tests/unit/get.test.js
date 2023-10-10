@@ -14,7 +14,7 @@ test('unauthenticated requests are denied', () => request(app).get('/v1/fragment
 
   // Using a valid username/password pair should give a success result with a .fragments array
   test('authenticated users get a fragments array', async () => {
-    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com','password1');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('ok');
     expect(Array.isArray(res.body.fragments)).toBe(true);

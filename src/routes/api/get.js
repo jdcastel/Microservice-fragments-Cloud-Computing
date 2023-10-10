@@ -1,5 +1,5 @@
 // src/routes/api/get.js
-const { createSuccessResponse } = require('../../src/response');
+const { createSuccessResponse } = require('../../response');
 /**
  * Get a list of fragments for the current user
  */

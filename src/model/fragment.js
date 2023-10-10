@@ -1,7 +1,7 @@
 //Assignment1
 // Use crypto.randomUUID() to create unique IDs, see:
 // https://nodejs.org/api/crypto.html#cryptorandomuuidoptions
-//const { randomUUID, randomBytes } = require('crypto');
+const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 
@@ -16,8 +16,15 @@ const {
 } = require('./data');
 
 class Fragment {
-  constructor({ id, ownerId, created, updated, type, size = 0 }) {
-    this.id = id;
+  constructor({ ownerId, created, updated, type, size = 0, id }) {
+    if (!ownerId || !type || !Fragment.isSupportedType(type)) {
+      throw new Error('Invalid or unsupported type.');
+    }
+    if (typeof size !== 'number' || size < 0) {
+      throw new Error('Size must be a non-negative number.');
+    }
+
+    this.id = id || randomUUID();
     this.ownerId = ownerId;
     this.created = created || new Date().toISOString();
     this.updated = updated || new Date().toISOString();
@@ -70,17 +77,17 @@ class Fragment {
    * Saves the current fragment to the database
    * @returns Promise<void>
    */
-  save() {
+  async save() {
     this.updated = new Date().toISOString();
-    return writeFragment(this);
+    return await writeFragment(this);
   }
 
   /**
    * Gets the fragment's data from the database
    * @returns Promise<Buffer>
    */
-  getData() {
-    return readFragmentData(this.ownerId, this.id);
+  async getData() {
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -95,7 +102,7 @@ class Fragment {
         }
         this.size = Buffer.from(data).length;
         this.updated = new Date().toISOString();
-        return writeFragmentData(this.ownerId, this.id, data);
+        return await writeFragmentData(this.ownerId, this.id, data);
       } catch (error) {
         return Promise.reject(new Error('Error in setData -', error));
       }
@@ -136,6 +143,7 @@ class Fragment {
   static isSupportedType(value) {
     return value == 'text/plain' || value.includes('text/plain; charset=utf-8') ? true : false;
   }
+  
 }
 
 module.exports.Fragment = Fragment;

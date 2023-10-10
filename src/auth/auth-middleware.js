@@ -1,4 +1,3 @@
-//Assignment1
 const passport = require('passport');
 
 const { createErrorResponse } = require('../response');
