@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../../src/app');
+const hash = require('../../src/hash');
 
 describe('post method /v1/fragments', () => {
     test('Test for post request', async () => {
@@ -15,6 +16,7 @@ describe('post method /v1/fragments', () => {
         expect(res.body.fragment.updated).toBeDefined();
         expect(res.body.fragment.size).toEqual(Buffer.byteLength('This is a fragment'));
         expect(res.body.fragment.type).toEqual('text/plain');
+        expect(res.body.fragment.ownerId).toEqual(hash('user1@email.com'));
     });    
 })
 
