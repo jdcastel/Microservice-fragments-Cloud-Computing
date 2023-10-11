@@ -1,43 +1,36 @@
 const { createSuccessResponse, createErrorResponse } = require('../../response');
-const API_URL = process.env.API_URL;
-const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger'); 
+const { Fragment } = require('../../model/fragment');
+const express = require('express');
+const router = express.Router();
 
-//// imports 
-// router.post('/fragments', async (req, res, next) => {
-//   //code...
-//   }
-  
-//   module.exports = router;
+  router.post('/fragments', async (req, res) => {
+    logger.debug({ user: req.user });
+    logger.debug({ body: req.body });
 
-module.exports = async (req, res) => {
-  console.log(Buffer.isBuffer(req.body));
-  if (!Buffer.isBuffer(req.body)) {
-    res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
-  } else {
-    try {
-      const myFragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });
-
-      logger.info('before save');
-      await myFragment.save();
-      logger.info('after save');
-
-      await myFragment.setData(req.body);
-      logger.info('after saveData');
-
-      // logger.debug({ myFragment }, 'Created Fragment');
-      // res.setHeader('Location', API_URL || req.header('host') + '/fragments/' + myFragment.id);
-      logger.debug({ myFragment }, 'Created Fragment');
-    res.setHeader('Location', API_URL + '/v1/fragments/' + myFragment.id);
-      res.setHeader('Content-Type', myFragment.type);
-
-      res.status(201).json(
-        createSuccessResponse({
-          fragment: myFragment,
-        })
-      );
-    } catch (err) {
-      res.status(400).json(createErrorResponse(400, 'Something when Wrong: ', err));
+    const contentType = req.headers['content-type'];
+    if (!Buffer.isBuffer(req.body)) {
+      res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
+    } else {
+      if (Fragment.isSupportedType(contentType)) {
+        const fragment = new Fragment({ ownerId: req.user, type: contentType });
+        try {
+          await fragment.setData(req.body);
+          await fragment.save();
+          //Set Location 
+          res.set('Location', `http://${req.headers.host}/v1/fragments/${fragment.id}`);
+          let msg = {
+            fragment: fragment,
+          };
+          let message = createSuccessResponse(msg);
+          res.status(201).json(message);
+        } catch (err) {
+          logger.error({ err }, 'Post error :(');
+        }
+      } else {
+        res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
+      }
     }
-  }
-};
+  });
+  
+  module.exports = router;

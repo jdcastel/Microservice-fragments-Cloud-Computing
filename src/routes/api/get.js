@@ -8,5 +8,6 @@ module.exports = (req, res) => {
   //   status: 'ok',
   //   fragments: [],
   // });
-  res.status(200).json(createSuccessResponse({ fragments: [] }));
+  // res.status(201).json(createSuccessResponse({ fragments: [] }));
+   res.status(200).json(createSuccessResponse({ fragments: [] }));
 };
