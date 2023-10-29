@@ -25,7 +25,7 @@ const router = express.Router();
           let message = createSuccessResponse(msg);
           res.status(201).json(message);
         } catch (err) {
-          logger.error({ err }, 'Post error :(');
+          res.status(500).json(createErrorResponse(500, err));
         }
       } else {
         res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));

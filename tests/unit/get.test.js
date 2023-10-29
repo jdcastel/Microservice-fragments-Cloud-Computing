@@ -6,11 +6,11 @@ const app = require('../../src/app');
 
 describe('GET /v1/fragments', () => {
 
-  test('unauthenticated requests are denied', () => request(app)
+  test('unauthenticated request', () => request(app)
   .get('/v1/fragments')
   .expect(401));
 
-  test('incorrect credentials are denied', () =>
+  test('credentials error', () =>
     request(app)
     .get('/v1/fragments')
     .auth('invalid@notemail.com', 'notpassword')

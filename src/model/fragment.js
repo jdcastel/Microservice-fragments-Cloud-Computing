@@ -57,13 +57,9 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    try {
         if (await readFragment(ownerId, id) == undefined) 
-            throw 'No user found';
+          throw new Error('No fragment found');
         return await readFragment(ownerId, id);
-    } catch (error) {
-        return Promise.reject(new Error('No user found - ', error));
-    }
   }
 
   /**

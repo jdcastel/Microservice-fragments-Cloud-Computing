@@ -6,7 +6,9 @@ module.exports = async (req, res) => {
     const fragment = await Fragment.byId(req.user, req.params.id);
      const data = await fragment.getData();
     // console.log(data);
-    res.set('Content-Type', 'text/plain');
+    //Set the content-type header to the fragment's type, then .send() the raw buffer.
+    const contentType = req.user.contentType || 'text/plain';
+    res.set('Content-Type', contentType);
     res.status(200).json(createSuccessResponse({
       fragment: data + ""
     }));

@@ -4,11 +4,11 @@ const request = require('supertest');
 const app = require('../../src/app');
 
 describe('get /v1/fragments/:id', () => {
-  test('unauthenticated requests are denied', () => request(app)
+  test('unauthenticated request', () => request(app)
   .get('/v1/fragments/noid')
   .expect(401));
 
-  test('incorrect credentials are denied', () =>
+  test('credentials error', () =>
     request(app).get('/v1/fragments/noid')
     .auth('invalid@notemail.com', 'notpassword')
     .expect(401));

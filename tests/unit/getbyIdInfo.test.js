@@ -3,13 +3,13 @@
 const request = require('supertest');
 const app = require('../../src/app');
 
-describe('GET /v1/fragments/:id/info', () => {
+describe('get /v1/fragments/:id/info', () => {
 
-  test('unauthenticated requests are denied', () => request(app)
+  test('unauthenticated request', () => request(app)
   .get('/v1/fragments/noid/info').expect(401));
 
-  test('incorrect credentials are denied', () =>
-    request(app).get('/v1/fragments/anyid/info')
+  test('credentials error', () =>
+    request(app).get('/v1/fragments/noid/info')
     .auth('invalid@notemail.com', 'notpassword')
     .expect(401));
 
