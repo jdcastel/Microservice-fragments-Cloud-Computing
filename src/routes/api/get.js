@@ -1,6 +1,5 @@
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require("../../model/fragment");
-
 /**
  * Get a list of fragments for the current user
  */
@@ -14,5 +13,4 @@ module.exports = async (req, res) => {
   } catch (err) {
     res.status(404).json(createErrorResponse(404, err));
   }
-
 };

@@ -13,8 +13,9 @@ const { Fragment } = require('../../model/fragment');
 const contentType = require('content-type');
 
 // Define our first route, which will be: GET /v1/fragments
-router.get('/fragments/:id', require('./getbyId'));
 router.get('/fragments', require('./get'));
+router.get('/fragments/:id', require('./getbyId'));
+router.get('/fragments/:id/info', require('./getbyIdInfo'));
 
 // Support sending various Content-Types on the body up to 5M in size
 const rawBody = () =>
@@ -31,10 +32,6 @@ const rawBody = () =>
   });
 
 // Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
-// You can use Buffer.isBuffer(req.body) to test if it was parsed by the raw body parser.
-// Define our second route, which will be: POST /v1/fragments
-// Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
-// You can use Buffer.isBuffer(req.body) to test if it was parsed by the raw body parser.
 
 // Other routes will go here later on...
 router.post('/fragments', rawBody(), require('./post'));

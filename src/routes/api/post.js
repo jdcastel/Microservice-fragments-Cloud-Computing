@@ -17,7 +17,7 @@ const router = express.Router();
         try {
           await fragment.setData(req.body);
           await fragment.save();
-          //Set Location 
+
           res.set('Location', `http://${req.headers.host}/v1/fragments/${fragment.id}`);
           let msg = {
             fragment: fragment,
