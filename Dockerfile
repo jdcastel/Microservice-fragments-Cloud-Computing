@@ -26,7 +26,7 @@ COPY --from=base /app /app
 COPY . .
 
 # Install dumb-init with --no-cache switch
-RUN apk add --no-cache dumb-init
+RUN apk add --no-cache dumb-init=1.2.5-r1
 
 # Start the container by running our server
 CMD ["dumb-init","node","/app/src/server.js"]
