@@ -1,37 +1,47 @@
 # Stage 0: Build Stage
-# Use node version 16.14-alpine3.14
-FROM node:16.14-alpine3.14 AS base
+# Use node version 16.14-alpine3.14 as the base version
+FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS base
 
-LABEL maintainer="Juan Castelblanco <castelwhite7821@outlook.com>"
-LABEL description="Fragments node.js microservice"
+# Metadata information
+LABEL maintainer="Juan Castelblanco <jdrodriguez-castelbl@myseneca.ca>" \
+      description="Fragments microservice Dockerfile"
 
-ENV NODE_ENV=production
-ENV NPM_CONFIG_LOGLEVEL=warn
-ENV NPM_CONFIG_COLOR=false
+# Reduce npm spam when installing within Docker
+# Disable colour when run inside Docker
+ENV NODE_ENV=production \
+    NPM_CONFIG_LOGLEVEL=warn \
+    NPM_CONFIG_COLOR=false
 
+# Create the working directory
 WORKDIR /app
 
+# Copy package.json and package-lock.json
 COPY package*.json /app/
 
-# Install node dependencies defined in package-lock.json
+# Install Node.js
 RUN npm install --no-package-lock
 
-# Stage 1: Production Stage
-FROM node:16.14-alpine3.14 AS production
+################################################
 
+# Stage 1: Production Stage
+# Use the same base image as the production stage
+FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS production
+
+# Create the working directory
 WORKDIR /app
 
+# Copy files from the 'base' stage to the working directory
 COPY --from=base /app /app
-
 COPY . .
 
-# Install dumb-init with --no-cache switch
+# Install dumb-init
 RUN apk add --no-cache dumb-init=1.2.5-r1
 
-# Start the container by running our server
+# Command to start the container using dumb-init
 CMD ["dumb-init","node","/app/src/server.js"]
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl --fail localhost:8080 || exit 1
+# Healthcheck command
+HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
+ CMD wget --no-verbose --tries=1 --spider localhost:8080 || exit 1
