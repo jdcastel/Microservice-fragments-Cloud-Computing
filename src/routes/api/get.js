@@ -5,8 +5,10 @@ const { Fragment } = require("../../model/fragment");
  */
 module.exports = async (req, res) => {
   try {
+    // now returns expanded fragment metadata for an authenticated user. 
     let expand = (req.query.expand && req.query.expand == 1) ? true : false;
     var fragments = await Fragment.byUser(req.user, expand);
+
     res.status(200).json(createSuccessResponse({
       fragments
     }));

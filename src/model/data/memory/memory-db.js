@@ -1,4 +1,4 @@
-//Assignment1
+//Assignment 1
 const validateKey = (key) => typeof key === 'string';
 
 class MemoryDB {

@@ -32,7 +32,6 @@ const rawBody = () =>
   });
 
 // Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
-
 // Other routes will go here later on...
 router.post('/fragments', rawBody(), require('./post'));
 

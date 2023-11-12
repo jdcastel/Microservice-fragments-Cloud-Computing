@@ -7,16 +7,11 @@ module.exports = async (req, res) => {
     let msg = {
       fragment: fragment,
     };
-    let messageSuccess = createSuccessResponse(msg);
-    res.status(200).json(messageSuccess);
+    let successMsg = createSuccessResponse(msg);
+    res.status(200).json(successMsg);
   } else {
-    let msg = {
-      status: 'error',
-      error: {
-        message: 'no fragment found',
-        code: 404,
-      },
-    };
-    res.status(404).json(createErrorResponse(404, msg));
+    res.status(404).json(createErrorResponse(
+      404, "Fragment does not found"
+    ));
   }
 };

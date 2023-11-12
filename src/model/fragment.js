@@ -4,7 +4,6 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
-const logger = require('../logger');
 // Functions for working with fragment metadata/data using our DB
 const {
   readFragment,
@@ -42,7 +41,6 @@ class Fragment {
     // A user might not have any fragments (yet), so return an empty
     // list instead of an error when there aren't any.
     try {
-      logger.debug({ ownerId, expand }, 'Fragment.byUser()');
       const fragments = await listFragments(ownerId, expand);
       return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
     } catch (err) {
@@ -97,13 +95,13 @@ class Fragment {
   async setData(data) {
     try {
         if (!data) {
-          throw 'no data';
+          throw 'no data in setData function';
         }
         this.size = Buffer.from(data).length;
         this.updated = new Date().toISOString();
         return await writeFragmentData(this.ownerId, this.id, data);
       } catch (error) {
-        return Promise.reject(new Error('Error in setData -', error));
+        return Promise.reject(new Error('Error in setData function', error));
       }
   }
 
@@ -122,8 +120,12 @@ class Fragment {
    * @returns {boolean} true if fragment's type is text/*
    */
   get isText() {
-    const { type } = contentType.parse(this.type);
-    return type == 'text/plain' ? true : false;
+    const textExt = [
+      `text/plain`,
+      `text/markdown`,
+      `text/html`,
+    ];
+    return textExt.includes(this.mimeType);
   }
 
   /**
@@ -131,7 +133,7 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    return [contentType.format({ type: 'text/plain' })];
+    return [this.mimeType];
   }
 
   /**
@@ -140,9 +142,22 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    return value == 'text/plain' || value.includes('text/plain; charset=utf-8') ? true : false;
-  }
+    const validTypes = new Set([
+      'text/plain',
+      'text/markdown',
+      'text/html',
+      'application/json',
+    ]);
   
+    if (!value || value.trim().length === 0) {
+      return false;
+    }
+  
+    const delimiterIndex = value.indexOf(';');
+    const type = delimiterIndex === -1 ? value : value.substring(0, delimiterIndex);
+  
+    return validTypes.has(type);
+  } 
 }
 
 module.exports.Fragment = Fragment;
