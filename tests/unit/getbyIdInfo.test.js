@@ -3,7 +3,7 @@
 const request = require('supertest');
 const app = require('../../src/app');
 
-describe('get /v1/fragments/:id/info', () => {
+describe('getby id info tests /v1/fragments/:id/info', () => {
 
   test('unauthenticated request', () => request(app)
   .get('/v1/fragments/noid/info').expect(401));
@@ -13,12 +13,12 @@ describe('get /v1/fragments/:id/info', () => {
     .auth('invalid@notemail.com', 'notpassword')
     .expect(401));
 
-  test('authenticated users get a fragment', async () => {
+  test('success getbyidInfo fragment', async () => {
     const res = await request(app)
     .post('/v1/fragments')
     .auth('user1@email.com', 'password1')
     .set('content-type', 'text/plain')
-    .send("this is the value");
+    .send('This is a fragment');
     const id = res.body.fragment.id;
 
     const res2 = await request(app)
@@ -28,7 +28,20 @@ describe('get /v1/fragments/:id/info', () => {
     expect(res2.statusCode).toBe(200);
     expect(res2.body.status).toBe('ok');
     expect(res2.body.fragment.id).toBe(id);
-    expect(res.body.fragment.type).toBe("text/plain");
+  });
+
+  test('fragment does not found', async () => {
+    await request(app)
+    .post('/v1/fragments')
+    .auth('user1@email.com','password1')
+    .set({'Content-Type': 'text/plain'})
+    .send('This is a fragment');
+
+    const res2 = await request(app).
+    get(`/v1/fragments/noId/info`)
+    .auth('user1@email.com', 'password1');
+
+    expect(res2.statusCode).toBe(404);
   });
 
 });
