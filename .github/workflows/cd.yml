@@ -83,8 +83,8 @@ jobs:
             # a few to get you started, but you should fill in the rest yourself.
             environment-variables: |
               API_URL=${{ secrets.API_URL }}
-              AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-              AWS_COGNITO_POOL_ID=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}
+              AWS_COGNITO_POOL_ID=${{ secrets.AWS_COGNITO_POOL_ID }}
               PORT=8080
         #deploy ECS task definition
         - name: Deploy Amazon ECS task definition
