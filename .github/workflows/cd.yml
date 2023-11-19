@@ -82,11 +82,10 @@ jobs:
             # for any values that should not be checked into git directly.  Here are
             # a few to get you started, but you should fill in the rest yourself.
             environment-variables: |
-              LOG_LEVEL=info
-              NODE_ENV=production
-              AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-              AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-              AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
+              API_URL=${{ secrets.API_URL }}
+              AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_COGNITO_POOL_ID=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              PORT=8080
         #deploy ECS task definition
         - name: Deploy Amazon ECS task definition
           uses: aws-actions/amazon-ecs-deploy-task-definition@v1

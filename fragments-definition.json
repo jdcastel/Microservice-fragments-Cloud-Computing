@@ -28,7 +28,7 @@
         "environment": [
           {
             "name": "API_URL",
-            "value": "http://ec2con-ecsel-de0tuc9gdedy-1627484823.us-east-1.elb.amazonaws.com:8080/"
+            "value": ""
           },
           {
             "name": "AWS_COGNITO_CLIENT_ID",
@@ -40,7 +40,7 @@
           },
           {
             "name": "PORT",
-            "value": "8080"
+            "value": ""
           }
         ],
         "resourceRequirements": null,
