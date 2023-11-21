@@ -16,7 +16,8 @@ const API_URL = process.env.API_URL;
           await fragment.setData(req.body);
           await fragment.save();
   
-          res.set('Location', `http://${API_URL}/v1/fragments/${fragment.id}`);
+          res.set('Location', `${API_URL}/v1/fragments/${fragment.id}`);
+          //res.set('Location', `http://${API_URL}/v1/fragments/${fragment.id}`);
           let msg = {
             fragment: fragment,
           };

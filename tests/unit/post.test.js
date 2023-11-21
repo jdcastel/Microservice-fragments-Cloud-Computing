@@ -28,6 +28,6 @@ describe('post tests /v1/fragments', () => {
         .send('This is a fragment');
 
         expect(res.statusCode).toBe(201);
-        expect(res.headers['location']).toBe(`http://${API_URL}/v1/fragments/${res.body.fragment.id}`)
+        expect(res.headers['location']).toBe(`${API_URL}/v1/fragments/${res.body.fragment.id}`)
       });
 })
