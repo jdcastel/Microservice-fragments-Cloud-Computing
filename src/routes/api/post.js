@@ -23,6 +23,7 @@ const API_URL = process.env.API_URL;
           };
           let successMsg = createSuccessResponse(msg);
           res.status(201).json(successMsg);
+
       } else {
         res.status(415).json(createErrorResponse(415, 'Error posting the fragment'));
       }

@@ -16,7 +16,7 @@ const contentType = require('content-type');
 router.get('/fragments', require('./get'));
 router.get('/fragments/:id', require('./getbyId'));
 router.get('/fragments/:id/info', require('./getbyIdInfo'));
-
+router.delete('/fragments/:id', require('./delete'));
 // Support sending various Content-Types on the body up to 5M in size
 const rawBody = () =>
   express.raw({

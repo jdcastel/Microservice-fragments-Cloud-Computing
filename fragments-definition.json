@@ -39,8 +39,8 @@
             "value": ""
           },
           {
-            "name": "PORT",
-            "value": ""
+            "name": "AWS_S3_BUCKET_NAME",
+            "value": "s3://jdrodriguez-fragments"
           }
         ],
         "resourceRequirements": null,
@@ -76,7 +76,7 @@
     ],
     "placementConstraints": [],
     "memory": "512",
-    "taskRoleArn": null,
+    "taskRoleArn": "arn:aws:iam::142005457833:role/LabRole",
     "compatibilities": [
       "EC2",
       "FARGATE"

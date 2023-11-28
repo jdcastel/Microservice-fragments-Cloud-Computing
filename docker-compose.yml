@@ -14,6 +14,10 @@ services:
       - API_URL=http://localhost:8080
       # Use Basic Auth (for running tests, CI)
       - HTPASSWD_FILE=tests/.htpasswd
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_SESSION_TOKEN=test
+      - AWS_DEFAULT_REGION=us-east-1
       # Use the LOG_LEVEL set in the host environment, or default to info
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - AWS_REGION=us-east-1
@@ -53,3 +57,11 @@ services:
       - SERVICES=s3
       # We're always working in us-east-1
       - DEFAULT_REGION=us-east-1
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_SESSION_TOKEN=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - AWS_S3_ENDPOINT_URL=http://localstack:4566
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-fragments}
