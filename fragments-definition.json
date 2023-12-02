@@ -31,15 +31,15 @@
           "value": "jdrodriguez-fragments"
         },
         {
-          "name": "",
-          "value": "" 
+          "name": "AWS_DYNAMODB_TABLE_NAME",
+          "value": "fragments" 
         },
         {
-          "name": "AWS_COGNITO_POOL_ID",
+          "name": "",
           "value": ""
         },
         {
-          "name": "PORT",
+          "name": "",
           "value": ""
         }
       ],
