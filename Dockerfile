@@ -1,6 +1,7 @@
 # Stage 0: Build Stage
 # Use node version 16.14-alpine3.14 as the base version
-FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS base
+#FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS base
+FROM node:20.10-alpine3.18 AS base
 
 # Metadata information
 LABEL maintainer="Juan Castelblanco <jdrodriguez-castelbl@myseneca.ca>" \
@@ -25,7 +26,8 @@ RUN npm install --no-package-lock
 
 # Stage 1: Production Stage
 # Use the same base image as the production stage
-FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS production
+#FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS production
+FROM node:20.10-alpine3.18 AS production
 
 # Create the working directory
 WORKDIR /app
@@ -35,10 +37,11 @@ COPY --from=base /app /app
 COPY . .
 
 # Install dumb-init
-RUN apk add --no-cache dumb-init=1.2.5-r1
+#RUN apk add --no-cache dumb-init=1.2.5-r1
 
 # Command to start the container using dumb-init
-CMD ["dumb-init","node","/app/src/server.js"]
+#CMD ["dumb-init","node","/app/src/server.js"]
+CMD ["npm", "start"]
 
 EXPOSE 8080
 

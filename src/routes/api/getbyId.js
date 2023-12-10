@@ -11,22 +11,30 @@ module.exports = async (req, res) => {
     params.id = baseUrl;
 
     let fragment, buffer;
-    fragment = new Fragment(await Fragment.byId(req.user, req.params.id));
-    buffer = await fragment.getData();
-    extTypeName ? (extTypeName = extTypeName.substring(1)) : '';
-
+    try {
+      fragment = new Fragment(await Fragment.byId(req.user, req.params.id));
+      buffer = await fragment.getData();
+      extTypeName ? (extTypeName = extTypeName.substring(1)) : '';
+    } catch (err) {
+      return res.status(404).json(createErrorResponse(404, ': Error requesting fragment: ' + err));
+    }
     if (extTypeName) {
       try {
         buffer = await fragment.fragmentConversion(buffer, extTypeName, fragment);
-        if(buffer == null){
-          return res.status(415).json(createErrorResponse(
-            415, `A ${fragment.type} fragment cannot be returned as a ${extTypeName}`
-          ));
+        if (buffer == null) {
+          return res
+            .status(415)
+            .json(
+              createErrorResponse(
+                415,
+                `A ${fragment.type} fragment cannot be returned as a ${extTypeName}`
+              )
+            );
         }
       } catch (err) {
         return res.status(400).json(createErrorResponse(400, `Error during conversion: ${err}`));
       }
-  
+
       const contentTypeWithExt = fragment.type.replace(/\/[^/]+$/, `/${extTypeName}`);
       res.setHeader('Content-Type', contentTypeWithExt);
     } else {
