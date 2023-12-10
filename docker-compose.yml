@@ -60,9 +60,6 @@ services:
       # We're always working in us-east-1
       - DEFAULT_REGION=us-east-1
       - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_SESSION_TOKEN=test
       - AWS_DEFAULT_REGION=us-east-1
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - AWS_S3_ENDPOINT_URL=http://localstack:4566
