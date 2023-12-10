@@ -1,6 +1,6 @@
 # Stage 0: Build Stage
 # Use node version 16.14-alpine3.14 as the base version
-FROM --platform=linux/arm64 node:20.10-alpine3.18 AS base
+FROM node:20.10-alpine3.18 AS base
 
 # Metadata information
 LABEL maintainer="Juan Castelblanco <jdrodriguez-castelbl@myseneca.ca>" \
@@ -26,7 +26,7 @@ RUN npm install && \
 
 # Stage 1: Production Stage
 # Use the same base image as the production stage
-FROM --platform=linux/arm64 node:20.10-alpine3.18 AS production
+FROM node:20.10-alpine3.18 AS production
 
 # Create the working directory
 WORKDIR /app
