@@ -1,6 +1,6 @@
 # Stage 0: Build Stage
 # Use node version 16.14-alpine3.14 as the base version
-FROM node:20.10-alpine3.18 AS base
+FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS base
 
 # Metadata information
 LABEL maintainer="Juan Castelblanco <jdrodriguez-castelbl@myseneca.ca>" \
@@ -19,14 +19,13 @@ WORKDIR /app
 COPY package*.json /app/
 
 # Install Node.js
-RUN npm ci --omit=dev && \
-    npm rebuild --arch=arm64 --platform=linux --libc=musl sharp
+RUN npm install --no-package-lock
 
 ################################################
 
 # Stage 1: Production Stage
 # Use the same base image as the production stage
-FROM node:20.10-alpine3.18 AS production
+FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS production
 
 # Create the working directory
 WORKDIR /app
@@ -36,15 +35,13 @@ COPY --from=base /app /app
 COPY . .
 
 # Install dumb-init
-#RUN apk add --no-cache dumb-init=1.2.5-r1
+RUN apk add --no-cache dumb-init=1.2.5-r1
 
 # Command to start the container using dumb-init
-#CMD ["dumb-init","node","/app/src/server.js"]
-CMD ["npm", "start"]
+CMD ["dumb-init","node","/app/src/server.js"]
 
 EXPOSE 8080
 
 # Healthcheck command
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
  CMD wget --no-verbose --tries=1 --spider localhost:8080 || exit 1
-
