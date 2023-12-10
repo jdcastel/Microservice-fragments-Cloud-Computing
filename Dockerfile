@@ -19,7 +19,7 @@ WORKDIR /app
 COPY package*.json /app/
 
 # Install Node.js
-RUN npm install && \
+RUN npm ci --omit=dev && \
     npm rebuild --arch=arm64 --platform=linux --libc=musl sharp
 
 ################################################
