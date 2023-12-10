@@ -4,6 +4,12 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+var md = require('markdown-it')({
+  html: true,
+});
+// var md1 = require('markdown-it')();
+const sharp = require('sharp');
+
 // Functions for working with fragment metadata/data using our DB
 const {
   readFragment,
@@ -55,9 +61,8 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-        if (await readFragment(ownerId, id) == undefined) 
-          throw new Error('No fragment found');
-        return await readFragment(ownerId, id);
+    if ((await readFragment(ownerId, id)) == undefined) throw new Error('No fragment found');
+    return await readFragment(ownerId, id);
   }
 
   /**
@@ -94,15 +99,15 @@ class Fragment {
    */
   async setData(data) {
     try {
-        if (!data) {
-          throw 'no data in setData function';
-        }
-        this.size = Buffer.from(data).length;
-        this.updated = new Date().toISOString();
-        return await writeFragmentData(this.ownerId, this.id, data);
-      } catch (error) {
-        return Promise.reject(new Error('Error in setData function', error));
+      if (!data) {
+        throw 'no data in setData function';
       }
+      this.size = Buffer.from(data).length;
+      this.updated = new Date().toISOString();
+      return await writeFragmentData(this.ownerId, this.id, data);
+    } catch (error) {
+      return Promise.reject(new Error('Error in setData function', error));
+    }
   }
 
   /**
@@ -120,11 +125,7 @@ class Fragment {
    * @returns {boolean} true if fragment's type is text/*
    */
   get isText() {
-    const textExt = [
-      `text/plain`,
-      `text/markdown`,
-      `text/html`,
-    ];
+    const textExt = [`text/plain`, `text/markdown`, `text/html`];
     return textExt.includes(this.mimeType);
   }
 
@@ -147,17 +148,74 @@ class Fragment {
       'text/markdown',
       'text/html',
       'application/json',
+      'image/png',
+      'image/jpeg',
+      'image/webp',
+      'image/gif',
     ]);
-  
+
     if (!value || value.trim().length === 0) {
       return false;
     }
-  
+
     const delimiterIndex = value.indexOf(';');
     const type = delimiterIndex === -1 ? value : value.substring(0, delimiterIndex);
-  
+
     return validTypes.has(type);
-  } 
+  }
+
+  async fragmentConversion(buffer, conversionext, fragment) {
+    let fragmentData = null;
+
+    if (fragment.type === 'text/plain' && conversionext === 'txt') {
+      return buffer.toString();
+    }
+
+    if (fragment.type === 'text/markdown' && ['md', 'html', 'txt'].includes(conversionext)) {
+      if (conversionext === 'txt') {
+        fragmentData = buffer;
+        fragmentData = md.render(fragmentData.toString('utf-8'));
+        fragmentData = Buffer.from(fragmentData, 'utf-8');
+        return fragmentData;
+      }
+
+      if (conversionext === 'html') {
+        fragmentData = buffer;
+        fragmentData = md.render(fragmentData.toString('utf-8'));
+        fragmentData = Buffer.from(fragmentData, 'utf-8');
+        return fragmentData;
+      }
+      return buffer;
+    }
+
+    if (fragment.type === 'text/html' && ['html', 'txt'].includes(conversionext)) {
+      if (conversionext === 'txt') {
+        fragmentData = buffer;
+        fragmentData = md.render(fragmentData.toString('utf-8'));
+        fragmentData = Buffer.from(fragmentData, 'utf-8');
+        return fragmentData;
+      }
+      return buffer;
+    }
+
+    if (fragment.type === 'application/json' && ['json', 'txt'].includes(conversionext)) {
+      if (conversionext === 'txt') {
+        fragmentData = buffer;
+        fragmentData = JSON.parse(fragmentData.toString('utf-8'));
+        fragmentData = Buffer.from(JSON.stringify(fragmentData), 'utf-8');
+      }
+      return buffer;
+    }
+
+    if (
+      fragment.type.includes('image/') &&
+      ['png', 'jpeg', 'webp', 'gif'].includes(conversionext)
+    ) {
+      fragmentData = await sharp(buffer).toFormat(conversionext).toBuffer();
+      return fragmentData;
+    }
+    return fragmentData;
+  }
 }
 
 module.exports.Fragment = Fragment;

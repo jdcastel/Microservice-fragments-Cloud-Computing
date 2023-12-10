@@ -1,6 +1,6 @@
 # Stage 0: Build Stage
 # Use node version 16.14-alpine3.14 as the base version
-FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS base
+FROM --platform=linux/arm64 node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS base
 
 # Metadata information
 LABEL maintainer="Juan Castelblanco <jdrodriguez-castelbl@myseneca.ca>" \
@@ -19,13 +19,14 @@ WORKDIR /app
 COPY package*.json /app/
 
 # Install Node.js
-RUN npm install --no-package-lock
+RUN npm install && \
+    npm rebuild --arch=arm64 --platform=linux --libc=musl sharp
 
 ################################################
 
 # Stage 1: Production Stage
 # Use the same base image as the production stage
-FROM node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS production
+FROM --platform=linux/arm64 node:16.14-alpine3.14@sha256:a93230d096610a42310869b16777623fbcacfd593e1b9956324470f760048758 AS production
 
 # Create the working directory
 WORKDIR /app

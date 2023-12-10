@@ -10,25 +10,26 @@ const API_URL = process.env.API_URL;
       const contentType = req.headers['content-type'];
   
       if (!Buffer.isBuffer(req.body)) {
-        res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
-      } else if(Fragment.isSupportedType(contentType)){
-          const fragment = new Fragment({ ownerId: req.user, type: contentType });
-          await fragment.setData(req.body);
-          await fragment.save();
-  
-          res.set('Location', `${API_URL}/v1/fragments/${fragment.id}`);
-          //res.set('Location', `http://${API_URL}/v1/fragments/${fragment.id}`);
-          let msg = {
-            fragment: fragment,
-          };
-          let successMsg = createSuccessResponse(msg);
-          res.status(201).json(successMsg);
-
-      } else {
-        res.status(415).json(createErrorResponse(415, 'Error posting the fragment'));
+        return res.status(415).json({ error: 'Buffer is not supported' });
       }
+  
+      if (!Fragment.isSupportedType(contentType)) {
+        return res.status(415).json({ error: 'Media type is not supported' });
+      }
+      
+      const fragment = new Fragment({ ownerId: req.user, type: contentType });
+      await fragment.setData(req.body);
+      await fragment.save();
+  
+      const successMsg = createSuccessResponse({
+        fragment,
+      });
+  
+      res.set('Location', `${API_URL}/v1/fragments/${fragment.id}`);
+      res.status(201).json(successMsg);
+  
   }catch(err){
-    res.status(404).json(createErrorResponse(404, err));
+    res.status(404).json(createErrorResponse(404, 'Error posting fragment'));
   }
 });
   

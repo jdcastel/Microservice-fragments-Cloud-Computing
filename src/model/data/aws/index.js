@@ -1,22 +1,8 @@
-//Assignment1
-// XXX: temporary use of memory-db until we add DynamoDB
-// const MemoryDB = require('../memory/memory-db');
-
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const logger = require('../../../logger');
-
 const s3Client = require('./s3Client');
 const ddbDocClient = require('./ddbDocClient');
 const { PutCommand, GetCommand, QueryCommand, DeleteCommand} = require('@aws-sdk/lib-dynamodb');
-
-// Create two in-memory databases: one for fragment metadata and the other for raw data
-// const data = new MemoryDB();
-// const metadata = new MemoryDB();
-
-// // Write a fragment's metadata to memory db. Returns a Promise
-// function writeFragment(fragment) {
-//   return metadata.put(fragment.ownerId, fragment.id, fragment);
-// }
 
 // Writes a fragment to DynamoDB. Returns a Promise.
 function writeFragment(fragment) {
@@ -36,11 +22,6 @@ function writeFragment(fragment) {
     throw err;
   }
 }
-
-// // Read a fragment's metadata from memory db. Returns a Promise
-// function readFragment(ownerId, id) {
-//   return metadata.get(ownerId, id);
-// }
 
 // Reads a fragment from DynamoDB. Returns a Promise<fragment|undefined>
 async function readFragment(ownerId, id) {
@@ -90,11 +71,6 @@ async function writeFragmentData(ownerId, id, data) {
   }
 }
 
-// // Read a fragment's data from memory db. Returns a Promise
-// function readFragmentData(ownerId, id) {
-//   return data.get(ownerId, id);
-// }
-
 // Convert a stream of data into a Buffer, by collecting
 // chunks of data until finished, then assembling them together.
 // We wrap the whole thing in a Promise so it's easier to consume.
@@ -141,19 +117,6 @@ async function readFragmentData(ownerId, id) {
   }
 }
 
-// // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
-// async function listFragments(ownerId, expand = false) {
-//   const fragments = await metadata.query(ownerId);
-
-//   // If we don't get anything back, or are supposed to give expanded fragments, return
-//   if (expand || !fragments) {
-//     return fragments;
-//   }
-
-//   // Otherwise, map to only send back the ids
-//   return fragments.map((fragment) => fragment.id);
-// }
-
 // Get a list of fragments, either ids-only, or full Objects, for the given user.
 // Returns a Promise<Array<Fragment>|Array<string>|undefined>
 async function listFragments(ownerId, expand = false) {
@@ -194,36 +157,6 @@ async function listFragments(ownerId, expand = false) {
   }
 }
 
-// // Delete a fragment's metadata and data from memory db. Returns a Promise
-// function deleteFragment(ownerId, id) {
-//   return Promise.all([
-//     // Delete metadata
-//     metadata.del(ownerId, id),
-//     // Delete data
-//     data.del(ownerId, id),
-//   ]);
-// }
-
-// async function deleteFragment(ownerId, id) {
-
-//   await metadata.del(ownerId, id);
-
-//   const params = {
-//     Bucket: process.env.AWS_S3_BUCKET_NAME,
-//     Key: `${ownerId}/${id}`,
-//   };
-
-//   const deleteCommand = new DeleteObjectCommand(params);
-
-//   try {
-//     await s3Client.send(deleteCommand);
-//   } catch (err) {
-//     const { Bucket, Key } = params;
-//     logger.error({ err, Bucket, Key }, 'Error deleting fragment data from S3');
-//     throw new Error('Unable to delete fragment data');
-//   }
-// }
-
 async function deleteFragment(ownerId, id) {
   // Delete metadata from DynamoDB
   const deleteParams = {
@@ -236,7 +169,7 @@ async function deleteFragment(ownerId, id) {
   try {
     await ddbDocClient.send(deleteCommand);
   } catch (err) {
-    logger.error({ err, deleteParams }, 'Error deleting fragment metadata from DynamoDB');
+    logger.error({ err, deleteParams }, 'Error deleting metadata from DynamoDB');
     throw new Error('Unable to delete fragment metadata');
   }
 
@@ -251,7 +184,7 @@ async function deleteFragment(ownerId, id) {
   try {
     await s3Client.send(deleteObjectCommand);
   } catch (err) {
-    logger.error({ err, ...s3Params }, 'Error deleting fragment data from S3');
+    logger.error({ err, ...s3Params }, 'Error deleting data from S3');
     throw new Error('Unable to delete fragment data');
   }
 }
