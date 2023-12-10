@@ -47,3 +47,4 @@ EXPOSE 8080
 # Healthcheck command
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
  CMD wget --no-verbose --tries=1 --spider localhost:8080 || exit 1
+
