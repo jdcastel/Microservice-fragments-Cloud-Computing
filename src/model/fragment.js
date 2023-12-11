@@ -50,7 +50,7 @@ class Fragment {
       const fragments = await listFragments(ownerId, expand);
       return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
     } catch (err) {
-      throw new Error('aquiiiiiiiiii' + err.message);
+      return Promise.reject(new Error('Aquiiiii', err));
     }
   }
 
