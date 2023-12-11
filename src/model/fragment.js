@@ -43,7 +43,7 @@ class Fragment {
    * @param {boolean} expand whether to expand ids to full fragments
    * @returns Promise<Array<Fragment>>
    */
-  static async byUser(ownerId, expand = false) {
+  static async byUser(ownerId, expand) {
     // A user might not have any fragments (yet), so return an empty
     // list instead of an error when there aren't any.
     try {
