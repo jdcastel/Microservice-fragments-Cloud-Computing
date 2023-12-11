@@ -4,9 +4,9 @@ const path = require('path');
 
 module.exports = async (req, res) => {
   try {
-    const { params, originalUrl } = req;
-    const id = path.basename(originalUrl);
-    let extTypeName = path.extname(originalUrl);
+    const { params, url } = req;
+    const id = path.basename(url);
+    let extTypeName = path.extname(url);
     const baseUrl = path.basename(id, extTypeName);
     params.id = baseUrl;
 
@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
       buffer = await fragment.getData();
       extTypeName ? (extTypeName = extTypeName.substring(1)) : '';
     } catch (err) {
-      return res.status(404).json(createErrorResponse(404, ': Error requesting fragment: ' + err));
+      return res.status(404).json(createErrorResponse(404, 'Error getting the fragment by id'));
     }
     if (extTypeName) {
       try {
@@ -44,6 +44,6 @@ module.exports = async (req, res) => {
 
     return res.status(200).send(buffer);
   } catch (err) {
-    return res.status(404).json(createErrorResponse(404, 'Error identifying the fragment by id'));
+    return res.status(404).json(createErrorResponse(404, 'Error getting the fragment by id'));
   }
 };
