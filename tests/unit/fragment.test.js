@@ -249,5 +249,35 @@ describe('Fragment class', () => {
       await Fragment.delete('1234', fragment.id);
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
     });
+
+    test('Convert text/plain to txt', async () => {
+      const buffer = Buffer.from('I am a txt!');
+      const fragment = new Fragment({ type: 'text/plain', ownerId: '1234', size: buffer.length });
+      const result = await fragment.fragmentConversion(buffer, 'txt', fragment);
+      expect(result).toBe('I am a txt!');
+    });
+
+    test('Convert text/markdown to html', async () => {
+      const buffer = Buffer.from('# I will convert to html!');
+      const fragment = new Fragment({
+        type: 'text/markdown',
+        ownerId: '1234',
+        size: buffer.length,
+      });
+      const result = await fragment.fragmentConversion(buffer, 'html', fragment);
+      expect(result.toString()).toBe('<h1>I will convert to html!</h1>\n');
+    });
+  });
+
+  test('Convert application/json to txt', async () => {
+    const jsonData = { message: 'I will convert to txt!' };
+    const buffer = Buffer.from(JSON.stringify(jsonData));
+    const fragment = new Fragment({
+      type: 'application/json',
+      ownerId: '1234',
+      size: buffer.length,
+    });
+    const result = await fragment.fragmentConversion(buffer, 'txt', fragment);
+    expect(result.toString()).toBe('{"message":"I will convert to txt!"}');
   });
 });

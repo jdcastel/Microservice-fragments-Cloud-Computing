@@ -110,18 +110,18 @@ class Fragment {
     }
   }
 
-  async setDataType(type) {
-    try {
-      if (!type) {
-        throw 'no data in setData function';
-      }
-      this.type = type;
-      this.updated = new Date().toISOString();
-      return await writeFragment(this);
-    } catch (error) {
-      return Promise.reject(new Error('Error in setData function', error));
-    }
-  }
+  // async setDataType(type) {
+  //   try {
+  //     if (!type) {
+  //       throw 'no data in setData function';
+  //     }
+  //     this.type = type;
+  //     this.updated = new Date().toISOString();
+  //     return await writeFragment(this);
+  //   } catch (error) {
+  //     return Promise.reject(new Error('Error in setData function', error));
+  //   }
+  // }
 
   /**
    * Returns the mime type (e.g., without encoding) for the fragment's type:
@@ -189,7 +189,7 @@ class Fragment {
         fragmentData = buffer;
         fragmentData = md.render(fragmentData.toString('utf-8'));
         fragmentData = Buffer.from(fragmentData, 'utf-8');
-        fragment.save();
+        // fragment.save();
         return fragmentData;
       }
 
