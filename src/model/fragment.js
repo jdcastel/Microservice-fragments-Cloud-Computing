@@ -43,16 +43,17 @@ class Fragment {
    * @param {boolean} expand whether to expand ids to full fragments
    * @returns Promise<Array<Fragment>>
    */
-  static async byUser(ownerId, expand) {
+  static async byUser(ownerId, expand=false) {
     // A user might not have any fragments (yet), so return an empty
     // list instead of an error when there aren't any.
     try {
       const fragments = await listFragments(ownerId, expand);
       return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
     } catch (err) {
-      return Promise.reject(new Error('Aquiiiii', err));
+      return [];
     }
   }
+
 
   /**
    * Gets a fragment for the user by the given id.
