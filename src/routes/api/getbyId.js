@@ -41,7 +41,8 @@ module.exports = async (req, res) => {
       res.setHeader('Content-Type', fragment.type);
     }
     res.setHeader('Content-Length', fragment.size);
-
+    await fragment.setDataType(buffer);
+    await fragment.save();
     return res.status(200).send(buffer);
   } catch (err) {
     return res.status(404).json(createErrorResponse(404, 'Error getting the fragment by id'));
