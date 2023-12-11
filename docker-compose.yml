@@ -2,6 +2,8 @@
 
 services:
   fragments:
+    container_name: fragments
+    restart: always
     init: true
     build: .
     environment:
@@ -22,15 +24,18 @@ services:
 
   # DynamoDB Local, see: https://hub.docker.com/r/amazon/dynamodb-local
   dynamodb-local:
+    container_name: dynamodb
     image: amazon/dynamodb-local
     ports:
       - '8000:8000'
     command: ['-jar', 'DynamoDBLocal.jar', '-inMemory']
 
   localstack:
+    container_name: s3
     image: localstack/localstack
     ports:
       - '4566:4566'
     environment:
       - SERVICES=s3
       - DEFAULT_REGION=us-east-1
+
