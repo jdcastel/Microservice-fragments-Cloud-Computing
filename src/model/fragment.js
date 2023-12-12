@@ -111,18 +111,18 @@ class Fragment {
     }
   }
 
-  // async setDataType(type) {
-  //   try {
-  //     if (!type) {
-  //       throw 'no data in setData function';
-  //     }
-  //     this.type = type;
-  //     this.updated = new Date().toISOString();
-  //     return await writeFragment(this);
-  //   } catch (error) {
-  //     return Promise.reject(new Error('Error in setData function', error));
-  //   }
-  // }
+  async setDataType(type) {
+    try {
+      if (!type) {
+        throw 'no data in setData function';
+      }
+      this.type = type;
+      this.updated = new Date().toISOString();
+      return await writeFragment(this);
+    } catch (error) {
+      return Promise.reject(new Error('Error in setData function', error));
+    }
+  }
 
   /**
    * Returns the mime type (e.g., without encoding) for the fragment's type:
@@ -180,7 +180,7 @@ class Fragment {
 
   async fragmentConversion(buffer, conversionext, fragment) {
     let fragmentData = null;
-
+    console.log('object1',conversionext);
     if (fragment.type === 'text/plain' && conversionext === 'txt') {
       return buffer.toString();
     }
@@ -190,7 +190,8 @@ class Fragment {
         fragmentData = buffer;
         fragmentData = md.render(fragmentData.toString('utf-8'));
         fragmentData = Buffer.from(fragmentData, 'utf-8');
-        // fragment.save();
+        fragment.setDataType('text/plain');
+        await writeFragmentData(this.ownerId, this.id, buffer);
         return fragmentData;
       }
 
@@ -198,6 +199,8 @@ class Fragment {
         fragmentData = buffer;
         fragmentData = md.render(fragmentData.toString('utf-8'));
         fragmentData = Buffer.from(fragmentData, 'utf-8');
+        fragment.setDataType('text/html');
+        await writeFragmentData(this.ownerId, this.id, buffer);
         return fragmentData;
       }
       return buffer;
@@ -208,6 +211,8 @@ class Fragment {
         fragmentData = buffer;
         fragmentData = md.render(fragmentData.toString('utf-8'));
         fragmentData = Buffer.from(fragmentData, 'utf-8');
+        fragment.setDataType('text/plain');
+        await writeFragmentData(this.ownerId, this.id, buffer);
         return fragmentData;
       }
       return buffer;
@@ -218,15 +223,27 @@ class Fragment {
         fragmentData = buffer;
         fragmentData = JSON.parse(fragmentData.toString('utf-8'));
         fragmentData = Buffer.from(JSON.stringify(fragmentData), 'utf-8');
+        fragment.setDataType('text/plain');
+        await writeFragmentData(this.ownerId, this.id, buffer);
       }
       return buffer;
     }
-
-    if (
-      fragment.type.includes('image/') &&
-      ['png', 'jpeg', 'webp', 'gif'].includes(conversionext)
-    ) {
+console.log('object2',conversionext);
+    if (fragment.type.includes('image/') && ['png', 'jpeg', 'webp', 'gif'].includes(conversionext)) {
+      if(conversionext === 'png') {
+        fragment.setDataType('image/png');
+      }else if(conversionext === 'jpg') {
+        fragment.setDataType('image/jpeg');
+      }else if(conversionext === 'webp') {
+        fragment.setDataType('image/webp');
+      }else if(conversionext === 'gif'){
+        fragment.setDataType('image/gif');
+      }
+      
       fragmentData = await sharp(buffer).toFormat(conversionext).toBuffer();
+
+      await writeFragmentData(this.ownerId, this.id, buffer);
+
       return fragmentData;
     }
     return fragmentData;
